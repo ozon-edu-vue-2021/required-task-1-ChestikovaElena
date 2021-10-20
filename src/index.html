@@ -1,53 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./styles/loader.css">
-    <link rel="stylesheet" href="./styles/index.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/loader.css" />
+    <link rel="stylesheet" href="./styles/index.css" />
     <title>Broken page</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <main class="main">
+      <div class="main-content">
         <div class="loader">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-        <button class="action fetch" data-page="2">Загрузить картинки</button>
+        <div class="row">
+          <button class="action fetch" data-page="2">Загрузить картинки</button>
+        </div>
         <section class="images content"></section>
+      </div>
     </main>
     <div class="popup">
-        <button class="action close">&Cross;</button>
-        <div class="content"></div>
+      <button class="action close"></button>
+      <div class="content"></div>
     </div>
 
-    <script src="./scripts/index.js"></script>
-
     <template id="image">
-        <a class="link" href="" data-id="">
-            <img src="" widht="250" alt=""></img>
-        </a>
+      <a class="link link__image" href="" data-id="">
+        <div><img src="" width="250" alt="" /></div>
+      </a>
     </template>
 
     <template id="popup-image">
-        <div>
-            <figure>
-                <img src="" alt="">
-                <figcaption>
-                    Автор: <address class="author"></address>
-                </figcaption>
-            </figure>
-            <a class="link open" href="" target="_blank">Открыть в полном размере</a>
-        </div>
+      <div class="popup--content">
+        <figure>
+          <img src="" alt="" />
+          <figcaption>
+            Автор:
+            <address class="author"></address>
+          </figcaption>
+        </figure>
+        <a class="link open" href="" target="_blank"
+          >Открыть в полном размере</a
+        >
+      </div>
     </template>
-</body>
 
+    <script src="./scripts/index.js"></script>
+  </body>
 </html>
