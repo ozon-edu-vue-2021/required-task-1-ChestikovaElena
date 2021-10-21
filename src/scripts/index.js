@@ -1,16 +1,16 @@
 'use strict';
 
-const action = document.querySelector('.action');
+const action = document.querySelector('.action.fetch');
 const templateImageCard = document.querySelector('#image');
 const templateImagePopup = document.querySelector('#popup-image');
-const container = document.querySelector('.images');
+const container = document.querySelector('.images-content');
 
 const popup = document.querySelector('.popup');
 const popupContainer = document.querySelector('.popup .content');
 const popupClose = document.querySelector('.popup .action');
 const loader = document.querySelector('.loader');
 
-const MAX_PAGE_IAMGES = 34;
+const MAX_PAGE_IMAGES = 34;
 let loaderTimeout;
 
 /**
@@ -22,6 +22,13 @@ const initialState = function () {
     getPictures();
 }
 
+const getResponseData = response => {
+    if (!response.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+    }
+    return response.json();
+};
+
 /**
  * Функция запрашивает картинки для галереи
  * и вызывает ф-цию отрисовки полученных картинок
@@ -31,8 +38,9 @@ const initialState = function () {
 const getPictures = function (page = 1, limit = 10) {
     showLoader();
     fetch(`https://picsum.photos/v2/list?page=${page};limit=${limit}`)
-        .then(function (response) {return response.json()})
+        .then(getResponseData)
         .then(function (result) {renderPictures(result)})
+        .catch(error => {console.error(error)})
 }
 
 /**
@@ -43,8 +51,9 @@ const getPictures = function (page = 1, limit = 10) {
 const getPictureInfo = function (id = 0) {
     showLoader();
     fetch(`https://picsum.photos/id/${id}/info`)
-        .then(function (response) {return response.json()})
+        .then(getResponseData)
         .then(function (result) {renderPopupPicture(result)})
+        .catch(error => {console.error(error)})
 }
 
 /**
@@ -59,11 +68,11 @@ const showLoader = function () {
  * Функция скрывает индикатор загрузки.
  * Удаляет таймаут индикатора, ничего не возвращает.
  */
-const hideLoader = function () {
+const hideLoader = function (ms = 0) {
     loaderTimeout = setTimeout(function () {
         loader.style.visibility = 'hidden';
-        loaderTimeout.clearTimeout();
-    }, 700);
+        clearTimeout(loaderTimeout);
+    }, ms);
 }
 
 /**
@@ -81,6 +90,11 @@ const cropImage = function (src, size = 2) {
     return `https://${domain}/${key}/${id}/${newWidth}/${newHeight}`;
 }
 
+const getRatio = function(src) {
+    const [domain, key, id, width, height] = src.split("/").splice(2);
+    return +width / +height;
+};
+
 /**
  * Функция копирует шаблон для каждой картинки,
  * заполняет его и встраивает в разметку
@@ -91,10 +105,10 @@ const renderPictures = function (list) {
         throw Error(`Pictures not defined. The list length: ${list.length}`);
     }
 
-    const clone = templateImageCard.content.cloneNode(true);
     const fragment = document.createDocumentFragment();
 
     list.forEach(function (element) {
+        const clone = templateImageCard.content.cloneNode(true);
         const link = clone.querySelector('a');
 
         link.href = element.url;
@@ -108,7 +122,7 @@ const renderPictures = function (list) {
     });
 
     container.appendChild(fragment);
-    hideLoader();
+    hideLoader(700);
 }
 
 /**
@@ -127,18 +141,27 @@ const renderPopupPicture = function (picture) {
     author.textContent = picture.author;
     img.width = picture.width / 10;
     link.href = picture.download_url;
+    const ratio = getRatio(img.src);
+    if (ratio < 1) {
+    popupContainer.classList.add("wrapper--vertical");
+    } else {
+    popupContainer.classList.contains("wrapper--vertical") &&
+        popupContainer.classList.remove("wrapper--vertical");
+    }
 
     popupContainer.innerHTML = '';
     popupContainer.appendChild(clone)
-    hideLoader();
-    togglePopup();
+    img.onload = function() {
+        togglePopup();
+        hideLoader();
+    };
 }
 
 /**
  * Функция переклбчает класс открытия на попапе
  */
 const togglePopup = function () {
-    popup.classList.toggle('open');
+    popup.classList.toggle('popup--open');
 }
 
 /**
@@ -152,13 +175,18 @@ const togglePopup = function () {
 const actionHandler = function (evt) {
     evt.preventDefault();
     const nextPage = evt.currentTarget.dataset.page;
-    evt.currentTarget.dataset.page = nextPage + 1;
 
-    if (nextPage > MAX_PAGE_IAMGES) {
-        console.warn(`WARN: You are trying to call a page that exceeds ${MAX_PAGE_IAMGES}`);
+    if (nextPage > MAX_PAGE_IMAGES) {
+    console.warn(
+        `WARN: You are trying to call a page that exceeds ${MAX_PAGE_IAMGES}`
+    );
+    } else if (nextPage == MAX_PAGE_IMAGES) {
         evt.currentTarget.disabled = true;
-    } else {
         getPictures(nextPage);
+    }
+    else {
+        getPictures(nextPage);
+        evt.currentTarget.dataset.page = +nextPage + 1;
     }
 }
 
@@ -172,7 +200,8 @@ const imageHandler = function (evt) {
     evt.preventDefault();
 
     if (evt.target.closest('a')) {
-        getPictureInfo(evt.target.dataset.id);
+        const imageId = evt.target.closest("a").dataset.id;
+        getPictureInfo(imageId);
     }
 }
 
