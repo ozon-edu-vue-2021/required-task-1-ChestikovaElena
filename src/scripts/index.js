@@ -178,7 +178,7 @@ const actionHandler = function (evt) {
 
     if (nextPage > MAX_PAGE_IMAGES) {
     console.warn(
-        `WARN: You are trying to call a page that exceeds ${MAX_PAGE_IAMGES}`
+        `WARN: You are trying to call a page that exceeds ${MAX_PAGE_IMAGES}`
     );
     } else if (nextPage == MAX_PAGE_IMAGES) {
         evt.currentTarget.disabled = true;
