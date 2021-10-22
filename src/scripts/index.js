@@ -24,7 +24,7 @@ const initialState = function () {
 
 const getResponseData = response => {
     if (!response.ok) {
-        return Promise.reject(`Ошибка: ${res.status}`);
+        return Promise.reject(`Ошибка: ${response.status}`);
     }
     return response.json();
 };
@@ -90,11 +90,6 @@ const cropImage = function (src, size = 2) {
     return `https://${domain}/${key}/${id}/${newWidth}/${newHeight}`;
 }
 
-const getRatio = function(src) {
-    const [domain, key, id, width, height] = src.split("/").splice(2);
-    return +width / +height;
-};
-
 /**
  * Функция копирует шаблон для каждой картинки,
  * заполняет его и встраивает в разметку
@@ -141,14 +136,7 @@ const renderPopupPicture = function (picture) {
     author.textContent = picture.author;
     img.width = picture.width / 10;
     link.href = picture.download_url;
-    const ratio = getRatio(img.src);
-    if (ratio < 1) {
-    popupContainer.classList.add("wrapper--vertical");
-    } else {
-    popupContainer.classList.contains("wrapper--vertical") &&
-        popupContainer.classList.remove("wrapper--vertical");
-    }
-
+    
     popupContainer.innerHTML = '';
     popupContainer.appendChild(clone)
     img.onload = function() {
@@ -198,9 +186,10 @@ const actionHandler = function (evt) {
  */
 const imageHandler = function (evt) {
     evt.preventDefault();
+    const imageNode = evt.target.closest('a');
 
-    if (evt.target.closest('a')) {
-        const imageId = evt.target.closest("a").dataset.id;
+    if (imageNode) {
+        const imageId = imageNode.dataset.id;
         getPictureInfo(imageId);
     }
 }

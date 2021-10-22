@@ -86,11 +86,8 @@ main {
     justify-content: center;
     align-items: center;
     border-radius: 50%;
+    background-color: transparent;
   }
-  
-.close:hover {
-    background-color: #4caf50;
-}
 
 /* Images style */
 .images-content {
@@ -152,8 +149,9 @@ main {
 }
 
 .popup .content {
-    width: 65vw;
-    margin: auto auto 50px;
+    width: 100%;
+    max-width: 600px;
+    margin: auto auto;
     padding: 20px;
     box-sizing: border-box;
     background-color: #fff;
@@ -161,13 +159,7 @@ main {
     text-align: right;
     column-count: initial;
   }
-  
-.popup .wrapper--vertical {
-    width: 100%;
-    max-width: 600px;
-    margin: auto;
-}
-  
+
 .popup-wrapper {
     display: flex;
     flex-direction: column;
