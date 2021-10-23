@@ -87,7 +87,11 @@ main {
     align-items: center;
     border-radius: 50%;
     background-color: transparent;
-  }
+}
+
+.close:hover {
+    background-color: transparent;
+}
 
 /* Images style */
 .images-content {
